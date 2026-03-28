@@ -13,10 +13,13 @@ object SliceDetector {
         val fx = p1x - cx
         val fy = p1y - cy
         val a = dx * dx + dy * dy
-        val b = 2 * (fx * dx + fy * dy)
-        val c = fx * fx + fy * fy - radius * radius
-        val discriminant = b * b - 4 * a * c
-        return discriminant >= 0
+        if (a == 0f) return fx * fx + fy * fy <= radius * radius
+        val b = 2f * (fx * dx + fy * dy)
+        // clamp t to [0,1] so we test the segment, not the infinite line
+        val t = (-b / (2f * a)).coerceIn(0f, 1f)
+        val closestX = fx + t * dx
+        val closestY = fy + t * dy
+        return closestX * closestX + closestY * closestY <= radius * radius
     }
 
     fun checkTrail(
