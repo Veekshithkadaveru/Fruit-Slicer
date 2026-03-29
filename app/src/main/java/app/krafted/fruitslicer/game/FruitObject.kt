@@ -8,7 +8,6 @@ enum class FruitType(val points: Int, val baseWeight: Int, val drawableRes: Int,
     ORANGE    (10, 20, R.drawable.fruit_orange,     0xFFFB8C00.toInt()),
     GRAPES    (20, 15, R.drawable.fruit_grapes,     0xFF8E24AA.toInt()),
     PINEAPPLE (20, 15, R.drawable.fruit_pineapple,  0xFFFDD835.toInt()),
-    CHERRY    (30,  8, R.drawable.fruit_cherry,     0xFFC62828.toInt()),
     LEMON     (30,  8, R.drawable.fruit_lemon,      0xFFF9A825.toInt()),
     BOMB      ( 0,  0, R.drawable.bomb,             0xFF212121.toInt())
 }

@@ -85,7 +85,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         roundTimerJob?.cancel()
         val state = _uiState.value
         val isNew = state.score > state.highScore
-        _uiState.update { it.copy(isGameOver = true, isNewHighScore = isNew) }
+        _uiState.update { it.copy(
+            isGameOver = true,
+            isNewHighScore = isNew,
+            highScore = if (isNew) state.score else it.highScore
+        ) }
         if (isNew) {
             viewModelScope.launch {
                 scoreDao.insert(ScoreEntity(score = state.score))

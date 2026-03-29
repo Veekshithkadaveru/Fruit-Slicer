@@ -23,7 +23,7 @@ object SliceDetector {
     }
 
     fun checkTrail(
-        trail: List<Pair<Float, Float>>,
+        trail: List<TrailPoint>,
         fruits: List<FruitObject>
     ): List<FruitObject> {
         if (trail.size < 2) return emptyList()
@@ -31,8 +31,10 @@ object SliceDetector {
         for (fruit in fruits) {
             if (!fruit.isAlive || fruit.isSliced) continue
             for (i in 0 until trail.size - 1) {
-                val (p1x, p1y) = trail[i]
-                val (p2x, p2y) = trail[i + 1]
+                val p1x = trail[i].x
+                val p1y = trail[i].y
+                val p2x = trail[i + 1].x
+                val p2y = trail[i + 1].y
                 if (lineIntersectsCircle(p1x, p1y, p2x, p2y, fruit.x, fruit.y, fruit.radius)) {
                     hit.add(fruit)
                     break
