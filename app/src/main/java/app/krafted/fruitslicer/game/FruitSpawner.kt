@@ -35,7 +35,17 @@ class FruitSpawner(var screenWidth: Int, var screenHeight: Int) {
         val baseVelX = (600f + Random.nextFloat() * 300f) * speedMultiplier
         val velX = if (fromLeft) baseVelX else -baseVelX
         val velY = -(1400f + Random.nextFloat() * 400f) * speedMultiplier
-        _activeFruits.add(FruitObject(nextId++, type, startX, startY, velX, velY, radius = fruitRadius))
+        _activeFruits.add(
+            FruitObject(
+                nextId++,
+                type,
+                startX,
+                startY,
+                velX,
+                velY,
+                radius = fruitRadius * type.sizeMultiplier
+            )
+        )
     }
 
     private fun weightedRandom(): FruitType {

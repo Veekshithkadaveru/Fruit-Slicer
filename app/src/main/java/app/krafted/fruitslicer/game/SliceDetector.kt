@@ -2,6 +2,11 @@ package app.krafted.fruitslicer.game
 
 object SliceDetector {
 
+    sealed interface SliceHitResult {
+        data class Bomb(val fruit: FruitObject) : SliceHitResult
+        data class Fruits(val fruits: List<FruitObject>) : SliceHitResult
+    }
+
     fun lineIntersectsCircle(
         p1x: Float, p1y: Float,
         p2x: Float, p2y: Float,
@@ -15,7 +20,7 @@ object SliceDetector {
         val a = dx * dx + dy * dy
         if (a == 0f) return fx * fx + fy * fy <= radius * radius
         val b = 2f * (fx * dx + fy * dy)
-        // clamp t to [0,1] so we test the segment, not the infinite line
+
         val t = (-b / (2f * a)).coerceIn(0f, 1f)
         val closestX = fx + t * dx
         val closestY = fy + t * dy
@@ -42,5 +47,20 @@ object SliceDetector {
             }
         }
         return hit.toList()
+    }
+
+    fun resolveTrailHit(
+        trail: List<TrailPoint>,
+        fruits: List<FruitObject>
+    ): SliceHitResult? {
+        val hit = checkTrail(trail, fruits)
+        if (hit.isEmpty()) return null
+
+        val bomb = hit.firstOrNull { it.type == FruitType.BOMB }
+        return if (bomb != null) {
+            SliceHitResult.Bomb(bomb)
+        } else {
+            SliceHitResult.Fruits(hit)
+        }
     }
 }

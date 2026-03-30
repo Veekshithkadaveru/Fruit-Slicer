@@ -2,14 +2,20 @@ package app.krafted.fruitslicer.game
 
 import app.krafted.fruitslicer.R
 
-enum class FruitType(val points: Int, val baseWeight: Int, val drawableRes: Int, val juiceColor: Int) {
-    STRAWBERRY(10, 20, R.drawable.fruit_strawberry, 0xFFE53935.toInt()),
-    WATERMELON(10, 20, R.drawable.fruit_watermelon, 0xFF43A047.toInt()),
-    ORANGE    (10, 20, R.drawable.fruit_orange,     0xFFFB8C00.toInt()),
-    GRAPES    (20, 15, R.drawable.fruit_grapes,     0xFF8E24AA.toInt()),
-    PINEAPPLE (20, 15, R.drawable.fruit_pineapple,  0xFFFDD835.toInt()),
-    LEMON     (30,  8, R.drawable.fruit_lemon,      0xFFF9A825.toInt()),
-    BOMB      ( 0,  0, R.drawable.bomb,             0xFF212121.toInt())
+enum class FruitType(
+    val points: Int,
+    val baseWeight: Int,
+    val drawableRes: Int,
+    val juiceColor: Int,
+    val sizeMultiplier: Float = 1f
+) {
+    STRAWBERRY(10, 20, R.drawable.fruit_strawberry, 0xFFE53935.toInt(), 1.3f),
+    WATERMELON(10, 20, R.drawable.fruit_watermelon, 0xFF43A047.toInt(), 1f),
+    ORANGE    (10, 20, R.drawable.fruit_orange,     0xFFFB8C00.toInt(), 1.3f),
+    GRAPES    (20, 15, R.drawable.fruit_grapes,     0xFF8E24AA.toInt(), 1.3f),
+    PINEAPPLE (20, 15, R.drawable.fruit_pineapple,  0xFFFDD835.toInt(), 1.3f),
+    LEMON     (30,  8, R.drawable.fruit_lemon,      0xFFF9A825.toInt(), 1f),
+    BOMB      ( 0,  0, R.drawable.bomb,             0xFF212121.toInt(), 1.3f)
 }
 
 data class FruitObject(

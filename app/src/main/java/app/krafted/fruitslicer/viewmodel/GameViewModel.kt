@@ -63,7 +63,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onBombSwiped() {
         if (_uiState.value.isGameOver) return
-        triggerGameOver()
+        loseLife()
     }
 
     fun resetGame() {
@@ -124,7 +124,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         round == 2 -> DifficultyConfig(
             maxOnScreen = 3,
             speedMultiplier = 1.0f,
-            bombWeight = 0,
+            bombWeight = 6,
             spawnIntervalMs = 1100
         )
 
