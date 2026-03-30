@@ -78,6 +78,16 @@ fun GameOverScreen(
         label = "gridSlide"
     )
 
+    val highScorePulse by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "highScorePulse"
+    )
+
     val headerColor = if (uiState.isNewHighScore) FruitGold else FruitRed
 
     Box(
@@ -149,7 +159,7 @@ fun GameOverScreen(
                     fontSize = 42.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp,
-                    color = headerColor,
+                    color = if (uiState.isNewHighScore) headerColor.copy(alpha = highScorePulse) else headerColor,
                     shadow = Shadow(
                         color = headerColor.copy(alpha = 0.65f),
                         blurRadius = 20f
@@ -226,7 +236,8 @@ fun GameOverScreen(
                                 color = FruitGold.copy(alpha = 0.35f),
                                 blurRadius = 18f
                             )
-                        )
+                        ),
+                        modifier = Modifier.graphicsLayer { alpha = if (uiState.isNewHighScore) highScorePulse else 1f }
                     )
 
                     Spacer(modifier = Modifier.height(18.dp))

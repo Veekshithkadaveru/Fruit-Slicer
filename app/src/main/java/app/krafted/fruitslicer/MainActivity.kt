@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import app.krafted.fruitslicer.ui.GameOverScreen
 import app.krafted.fruitslicer.ui.GameScreen
 import app.krafted.fruitslicer.ui.HomeScreen
+import app.krafted.fruitslicer.ui.SplashScreen
 import app.krafted.fruitslicer.ui.theme.FruitSlicerTheme
 import app.krafted.fruitslicer.viewmodel.GameViewModel
 
@@ -32,7 +33,16 @@ fun FruitSlicerApp() {
     val navController = rememberNavController()
     val gameViewModel: GameViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "splash") {
+        composable("splash") {
+            SplashScreen(
+                onSplashFinished = {
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                }
+            )
+        }
         composable("home") {
             HomeScreen(
                 viewModel = gameViewModel,

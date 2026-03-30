@@ -53,9 +53,7 @@ import app.krafted.fruitslicer.R
 import app.krafted.fruitslicer.viewmodel.GameViewModel
 
 private val FruitGold = Color(0xFFFFD36E)
-private val FruitRed = Color(0xFFFF5A6C)
 private val FruitPurple = Color(0xFF7946B8)
-private val FruitPurpleDeep = Color(0xFF1D1028)
 private val FruitGreen = Color(0xFF7CFF9E)
 private val DarkBg = Color(0xFF09060D)
 
@@ -67,7 +65,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     val infiniteTransition = rememberInfiniteTransition(label = "homeAnimations")
-    
+
     val bgOffset by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
@@ -163,7 +161,6 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            
             Text(
                 text = "FRUIT SLICER",
                 style = TextStyle(

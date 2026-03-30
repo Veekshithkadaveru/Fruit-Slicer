@@ -19,7 +19,6 @@ enum class FruitType(
 }
 
 data class FruitObject(
-    val id: Int,
     val type: FruitType,
     var x: Float,
     var y: Float,
@@ -27,8 +26,7 @@ data class FruitObject(
     var velY: Float,
     val radius: Float = 80f,
     var isSliced: Boolean = false,
-    var isAlive: Boolean = true,
-    var sliceTime: Long = 0L
+    var isAlive: Boolean = true
 ) {
     companion object {
         const val GRAVITY = 1600f

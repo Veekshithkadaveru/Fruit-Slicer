@@ -7,7 +7,6 @@ class FruitSpawner(var screenWidth: Int, var screenHeight: Int) {
     private val lock = Any()
     val activeFruits: List<FruitObject> get() = synchronized(lock) { _activeFruits.toList() }
 
-    private var nextId = 0
     private var lastSpawnTime = 0L
     var spawnIntervalMs = 1200L
     var speedMultiplier = 1.0f
@@ -35,7 +34,6 @@ class FruitSpawner(var screenWidth: Int, var screenHeight: Int) {
         val velY = -(2400f + Random.nextFloat() * 400f)
         _activeFruits.add(
             FruitObject(
-                nextId++,
                 type,
                 startX,
                 startY,
@@ -59,5 +57,4 @@ class FruitSpawner(var screenWidth: Int, var screenHeight: Int) {
     }
 
     fun removeDeadFruits() { synchronized(lock) { _activeFruits.removeAll { !it.isAlive } } }
-    fun clearAll() { synchronized(lock) { _activeFruits.clear() } }
 }

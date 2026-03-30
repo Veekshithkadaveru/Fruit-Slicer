@@ -38,7 +38,6 @@ class SliceDetectorTest {
 
     private fun fruit(type: FruitType, x: Float, y: Float): FruitObject {
         return FruitObject(
-            id = type.ordinal,
             type = type,
             x = x,
             y = y,

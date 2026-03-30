@@ -447,7 +447,8 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
                 val rx = p.x - nx * radius
                 val ry = p.y - ny * radius
 
-                val cAlpha = (linearT * 255f * alphaScale).toInt().coerceIn(0, 255)
+                val posFade = i / n.toFloat()
+                val cAlpha = (posFade * linearT * 255f * alphaScale).toInt().coerceIn(0, 255)
                 val color = Color.argb(cAlpha, r, g, b)
 
                 leftVertices[i * 4 + 0] = lx
@@ -510,9 +511,11 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
             val speedBoost = (distance / 70f).coerceIn(0.85f, 1.35f)
             val glowWidth = (maxWidth * 0.95f * linearT * speedBoost).coerceAtLeast(1.5f)
 
+            val segFade = (i + 0.5f) / (n - 1).toFloat()
+
             bladeGlowPaint.strokeWidth = glowWidth
             bladeGlowPaint.color = Color.argb(
-                (linearT * 78f).toInt().coerceIn(0, 255),
+                (segFade * linearT * 78f).toInt().coerceIn(0, 255),
                 125,
                 231,
                 255
@@ -521,7 +524,7 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
 
             bladeSparkPaint.strokeWidth = (glowWidth * 0.38f).coerceAtLeast(1.2f)
             bladeSparkPaint.color = Color.argb(
-                (linearT * 168f).toInt().coerceIn(0, 255),
+                (segFade * linearT * 168f).toInt().coerceIn(0, 255),
                 215,
                 245,
                 255
@@ -530,7 +533,7 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
 
             bladeCorePaint.strokeWidth = (glowWidth * 0.16f).coerceAtLeast(1.6f)
             bladeCorePaint.color = Color.argb(
-                (linearT * 255f).toInt().coerceIn(0, 255),
+                (segFade * linearT * 255f).toInt().coerceIn(0, 255),
                 255,
                 255,
                 255
@@ -656,7 +659,6 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
                 val fruit = hitResult.fruit
                 fruit.isSliced = true
                 fruit.isAlive = false
-                fruit.sliceTime = System.currentTimeMillis()
                 triggerBombFeedback(fruit.x, fruit.y)
                 triggerBombSliceEffect(fruit.x, fruit.y)
                 onBombSwiped?.invoke()
@@ -666,7 +668,6 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
                 hitResult.fruits.forEach { fruit ->
                     fruit.isSliced = true
                     fruit.isAlive = false
-                    fruit.sliceTime = System.currentTimeMillis()
                     juiceSplashes.add(JuiceSplash(fruit.x, fruit.y, fruit.type.juiceColor))
                     val spreadVel = 280f + kotlin.math.abs(fruit.velX) * 0.3f
                     slicedHalves.add(SlicedHalf(
@@ -731,9 +732,5 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         spawner?.bombWeight = bombWeight
         spawner?.maxOnScreen = maxOnScreen
         spawner?.spawnIntervalMs = spawnIntervalMs
-    }
-
-    fun clearFruits() {
-        spawner?.clearAll()
     }
 }
