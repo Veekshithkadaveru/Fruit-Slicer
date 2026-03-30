@@ -16,6 +16,21 @@ import kotlin.math.sin
 
 data class TrailPoint(val x: Float, val y: Float, var age: Float = 0f)
 data class BombSliceEffect(val x: Float, val y: Float, var age: Float = 0f)
+data class SlicedHalf(
+    var x: Float,
+    var y: Float,
+    var velX: Float,
+    var velY: Float,
+    var rotAngle: Float,
+    val rotSpeed: Float,
+    val type: FruitType,
+    val isLeft: Boolean,
+    var age: Float = 0f,
+    val duration: Float = 0.55f
+) {
+    val isAlive get() = age < duration
+    val alpha get() = ((1f - age / duration) * 255f).toInt().coerceIn(0, 255)
+}
 
 class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
@@ -51,6 +66,7 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
     private val juiceSplashes = mutableListOf<JuiceSplash>()
     private val scoreFloats = mutableListOf<ScoreFloat>()
     private val bombSliceEffects = mutableListOf<BombSliceEffect>()
+    private val slicedHalves = mutableListOf<SlicedHalf>()
 
     private val bladeVertexPaint = Paint().apply {
         isAntiAlias = true
@@ -102,6 +118,8 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         color = Color.argb(220, 255, 120, 120)
         strokeWidth = 8f
     }
+
+    private val halfPaint = Paint().apply { isAntiAlias = true }
 
     private val scoreTextPaint = Paint().apply {
         color = Color.WHITE
@@ -273,6 +291,14 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         bombSliceEffects.forEach { it.age += deltaTime }
         bombSliceEffects.removeAll { it.age >= bombSliceEffectDuration }
         bombFeedbackTime = (bombFeedbackTime - deltaTime).coerceAtLeast(0f)
+        slicedHalves.forEach { half ->
+            half.age += deltaTime
+            half.velY += 900f * deltaTime
+            half.x += half.velX * deltaTime
+            half.y += half.velY * deltaTime
+            half.rotAngle += half.rotSpeed * deltaTime
+        }
+        slicedHalves.removeAll { !it.isAlive }
     }
 
     private fun drawFrame(canvas: Canvas) {
@@ -294,6 +320,7 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
                 canvas.drawColor(Color.BLACK)
             }
             drawFruits(canvas)
+            drawSlicedHalves(canvas)
         }
         drawJuiceSplashes(canvas)
         drawBombSliceEffects(canvas)
@@ -356,6 +383,22 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
             } else {
                 canvas.drawBitmap(bitmap, null, destRect, null)
             }
+        }
+    }
+
+    private fun drawSlicedHalves(canvas: Canvas) {
+        slicedHalves.forEach { half ->
+            val bitmap = bitmaps[half.type] ?: return@forEach
+            val size = fruitSize * half.type.sizeMultiplier
+            halfPaint.alpha = half.alpha
+            canvas.save()
+            canvas.translate(half.x, half.y)
+            canvas.rotate(Math.toDegrees(half.rotAngle.toDouble()).toFloat())
+            val clipLeft = if (half.isLeft) -size / 2f else 0f
+            val clipRight = if (half.isLeft) 0f else size / 2f
+            canvas.clipRect(clipLeft, -size / 2f, clipRight, size / 2f)
+            canvas.drawBitmap(bitmap, null, RectF(-size / 2f, -size / 2f, size / 2f, size / 2f), halfPaint)
+            canvas.restore()
         }
     }
 
@@ -625,6 +668,19 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
                     fruit.isAlive = false
                     fruit.sliceTime = System.currentTimeMillis()
                     juiceSplashes.add(JuiceSplash(fruit.x, fruit.y, fruit.type.juiceColor))
+                    val spreadVel = 280f + kotlin.math.abs(fruit.velX) * 0.3f
+                    slicedHalves.add(SlicedHalf(
+                        x = fruit.x, y = fruit.y,
+                        velX = -spreadVel, velY = -350f,
+                        rotAngle = 0f, rotSpeed = -4.5f,
+                        type = fruit.type, isLeft = true
+                    ))
+                    slicedHalves.add(SlicedHalf(
+                        x = fruit.x, y = fruit.y,
+                        velX = spreadVel, velY = -350f,
+                        rotAngle = 0f, rotSpeed = 4.5f,
+                        type = fruit.type, isLeft = false
+                    ))
                     scoreFloats.add(
                         ScoreFloat(
                             fruit.x,
@@ -649,7 +705,13 @@ class SlicerGameView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
     }
 
     fun setRound(round: Int) {
-        val resId = app.krafted.fruitslicer.R.drawable.bg_round_1
+        val resId = when {
+            round <= 2 -> app.krafted.fruitslicer.R.drawable.bg_round_1
+            round == 3 -> app.krafted.fruitslicer.R.drawable.bg_round_2
+            round == 4 -> app.krafted.fruitslicer.R.drawable.bg_round_3
+            round == 5 -> app.krafted.fruitslicer.R.drawable.bg_round_4
+            else       -> app.krafted.fruitslicer.R.drawable.bg_round_5
+        }
         if (resId == backgroundResId && backgroundBitmap != null) return
         backgroundResId = resId
         if (screenWidth > 0) loadBackground(resId)

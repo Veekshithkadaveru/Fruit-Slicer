@@ -31,7 +31,7 @@ data class FruitObject(
     var sliceTime: Long = 0L
 ) {
     companion object {
-        const val GRAVITY = 1800f
+        const val GRAVITY = 1600f
     }
 
     fun update(deltaTime: Float, screenHeight: Int, onMissed: () -> Unit) {
